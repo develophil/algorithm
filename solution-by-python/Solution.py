@@ -254,6 +254,26 @@ class Solution:
         return sum_price
 
 
+    """
+    WEEK7. Search Algorithm
+    """
+    @staticmethod
+    def isBadVersion(version):
+        return True if version == 3 else False
+
+    def firstBadVersion(self, n):
+        left, right = 1, n
+
+        while left < right:
+            mid = left + (right - left) / 2
+            if self.isBadVersion(mid):
+                right = mid
+            else:
+                left = mid + 1
+        return int(left)
+
+
+
 
 
 # print(Solution().relativeSortArray([2,3,1,3,2,4,6,19,9,2,7], [2,1,4,3,9,6]))
