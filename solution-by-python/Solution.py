@@ -139,6 +139,123 @@ class Solution:
 
 
 
+    """
+    #1. Minimum Absolute Difference in an Array
+    https://www.hackerrank.com/challenges/minimum-absolute-difference-in-an-array/problem?h_l=interview&playlist_slugs%5B%5D%5B%5D=interview-preparation-kit&playlist_slugs%5B%5D%5B%5D=greedy-algorithms
+    Sample Input 0
+    3
+    3 -7 0
+    Sample Output 0
+    3
+    
+    Sample Input 1
+    10
+    -59 -36 -13 1 -53 -92 -2 -96 -54 75
+    Sample Output 1
+    1
+    
+    Sample Input 2
+    5
+    1 -3 71 68 17
+    Sample Output 2
+    3
+    """
+    # Complete the minimumAbsoluteDifference function below.
+    def minimumAbsoluteDifference(self, arr: List[int]) -> int:
+        arr.sort()
+
+        min = arr[-1]
+
+        for i in range(1, len(arr)):
+            diff = abs(arr[i] - arr[i-1])
+            if diff < min:
+                min = diff
+
+        return min
+
+
+    """
+    #2. Luck Balance
+    https://www.hackerrank.com/challenges/luck-balance/problem?h_l=interview&playlist_slugs%5B%5D%5B%5D=interview-preparation-kit&playlist_slugs%5B%5D%5B%5D=greedy-algorithms
+    k = contest counts
+    contests = 2차 배열 (e.g. [[5, 1], [2, 1], [1, 1], [8, 1], [10, 0], [5, 0]])
+    
+    Sample Input
+    6 3
+    5 1
+    2 1
+    1 1
+    8 1
+    10 0
+    5 0
+    
+    Sample Output
+    29
+    """
+    def luckBalance(self, k: int, contests: List[List[int]]) -> int:
+
+        important_lucks = []
+        unimportant_lucks = []
+
+        def sumRange(target, start, end):
+            result = 0
+            for i in range(start, end):
+                result += target[i]
+            return result
+
+        # loop separate important with luck
+        for contest in contests:
+            luck = contest[0]
+            important = contest[1]
+
+            if important == 1:
+                important_lucks.append(luck)
+            else:
+                unimportant_lucks.append(luck)
+
+        # important_contest sort luck desc
+        important_lucks.sort(reverse=True)
+
+        luck_balance = 0
+        # merge sum luck_balance - first: important loop - sum or minus, second, sum unimportant loop
+
+        important_lucks_length = len(important_lucks)
+
+        if k >= len(important_lucks):
+            luck_balance += sumRange(important_lucks, 0, important_lucks_length)
+
+        else:
+            luck_balance += sumRange(important_lucks, 0, k)
+            luck_balance -= sumRange(important_lucks, k, important_lucks_length)
+
+        for luck in unimportant_lucks:
+            luck_balance += luck
+
+        return luck_balance
+
+
+    """
+    #3. Greedy Florist
+    https://www.hackerrank.com/challenges/greedy-florist/problem?h_l=interview&playlist_slugs%5B%5D%5B%5D=interview-preparation-kit&playlist_slugs%5B%5D%5B%5D=greedy-algorithms
+    """
+    # Complete the getMinimumCost function below.
+    def getMinimumCost(self, k: int, c: List[int]) -> int:
+
+        c.sort()
+
+        sum_price = 0
+
+        for i in range(len(c)):
+            original_price = c[-1 * (i+1)]
+            previous_purchase = math.floor(i / k)
+
+            sum_price += (previous_purchase + 1) * original_price
+
+        return sum_price
+
+
+
+
 # print(Solution().relativeSortArray([2,3,1,3,2,4,6,19,9,2,7], [2,1,4,3,9,6]))
 # print(Solution().largestNumber([121,12]))
 # print(Solution().largestNumber([3,30,34,5,9]))
@@ -150,4 +267,15 @@ class Solution:
 # print(Solution().maxSubArray(lists))
 # print(Solution().climbStairs(1))
 # print(Solution().rob([2,1,1,2]))
-print(Solution().rob([1,2,3,1]))
+# print(Solution().rob([1,2,3,1]))
+
+
+# week4
+# print(Solution().minimumAbsoluteDifference([3, -7, 0]))
+
+print(Solution().luckBalance(2, [[5, 1], [4, 0], [6, 1], [2, 1], [8, 0]]))
+## 3, [[5, 1], [2, 1], [1, 1], [8, 1], [10, 0], [5, 0]] -> 29
+## 5, [[13, 1], [10, 1], [9, 1], [8, 1], [13, 1], [12, 1], [18, 1], [13, 1]] -> 42
+## 2, [[5, 1], [4, 0], [6, 1], [2, 1], [8, 0]] -> 21
+
+# print(Solution().getMinimumCost(2, [2, 5, 6]))
