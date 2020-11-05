@@ -7,6 +7,14 @@ import sys
 from typing import List
 from functools import cmp_to_key
 
+
+class TreeNode:
+    def __init__(self, val=0, left=None, right=None):
+        self.val = val
+        self.left = left
+        self.right = right
+
+
 class Solution:
 
     def relativeSortArray(self, arr1: List[int], arr2: List[int]) -> List[int]:
@@ -40,8 +48,6 @@ class Solution:
         result = "".join(sorted(list(map(str, nums)), key=cmp_to_key(stringOrderCompare)))
 
         return result if result[0] != "0" else "0"
-
-
 
     # 53. Maximum Subarray
     def maxSubArray(self, nums: List[int]) -> int:
@@ -81,16 +87,15 @@ class Solution:
     Constraints:
     1 <= n <= 45
     """
+
     def climbStairs(self, n: int) -> int:
 
-        w = [i+1 for i in range(n)]
+        w = [i + 1 for i in range(n)]
 
         for i in range(2, n):
-            w[i] = w[i-1] + w[i-2]
+            w[i] = w[i - 1] + w[i - 2]
 
-        return w[n-1]
-
-
+        return w[n - 1]
 
     """
     198. House Robber
@@ -115,6 +120,7 @@ class Solution:
     0 <= nums.length <= 100
     0 <= nums[i] <= 400
     """
+
     def rob(self, nums: List[int]) -> int:
 
         numsSize = len(nums)
@@ -133,11 +139,9 @@ class Solution:
         sums[2] = max((sums[0] + sums[2]), sums[1])
 
         for i in range(3, numsSize):
-            sums[i] = nums[i] + max(sums[i-2], sums[i-3])
+            sums[i] = nums[i] + max(sums[i - 2], sums[i - 3])
 
         return max(sums[-2], sums[-1])
-
-
 
     """
     #1. Minimum Absolute Difference in an Array
@@ -160,6 +164,7 @@ class Solution:
     Sample Output 2
     3
     """
+
     # Complete the minimumAbsoluteDifference function below.
     def minimumAbsoluteDifference(self, arr: List[int]) -> int:
         arr.sort()
@@ -167,12 +172,11 @@ class Solution:
         min = arr[-1]
 
         for i in range(1, len(arr)):
-            diff = abs(arr[i] - arr[i-1])
+            diff = abs(arr[i] - arr[i - 1])
             if diff < min:
                 min = diff
 
         return min
-
 
     """
     #2. Luck Balance
@@ -192,6 +196,7 @@ class Solution:
     Sample Output
     29
     """
+
     def luckBalance(self, k: int, contests: List[List[int]]) -> int:
 
         important_lucks = []
@@ -233,11 +238,11 @@ class Solution:
 
         return luck_balance
 
-
     """
     #3. Greedy Florist
     https://www.hackerrank.com/challenges/greedy-florist/problem?h_l=interview&playlist_slugs%5B%5D%5B%5D=interview-preparation-kit&playlist_slugs%5B%5D%5B%5D=greedy-algorithms
     """
+
     # Complete the getMinimumCost function below.
     def getMinimumCost(self, k: int, c: List[int]) -> int:
 
@@ -246,17 +251,17 @@ class Solution:
         sum_price = 0
 
         for i in range(len(c)):
-            original_price = c[-1 * (i+1)]
+            original_price = c[-1 * (i + 1)]
             previous_purchase = math.floor(i / k)
 
             sum_price += (previous_purchase + 1) * original_price
 
         return sum_price
 
-
     """
     WEEK7. Search Algorithm
     """
+
     @staticmethod
     def isBadVersion(version):
         return True if version == 3 else False
@@ -272,11 +277,250 @@ class Solution:
                 left = mid + 1
         return int(left)
 
+    """
+    #2. find first and last position
+    https://leetcode.com/problems/find-first-and-last-position-of-element-in-sorted-array/
+    Given an array of integers nums sorted in ascending order, find the starting and ending position of a given target value.
+    If target is not found in the array, return [-1, -1].
+    
+    Follow up: Could you write an algorithm with O(log n) runtime complexity?
+    
+    Example 1:
+    Input: nums = [5,7,7,8,8,10], target = 8
+    Output: [3,4]
+    
+    Example 2:
+    Input: nums = [5,7,7,8,8,10], target = 6
+    Output: [-1,-1]
+    
+    Example 3:
+    Input: nums = [], target = 0
+    Output: [-1,-1]
+    
+    Constraints:
+    0 <= nums.length <= 105
+    -109 <= nums[i] <= 109
+    nums is a non-decreasing array.
+    -109 <= target <= 109
+    """
+
+    def searchRange(self, nums: List[int], target: int) -> List[int]:
+
+        def offset(slices, t, desc=False):
+
+            order_weight = 1
+
+            if desc:
+                order_weight = -1
+
+            l, r = 0, len(slices) - 1
+
+            if not slices or order_weight * slices[l] > order_weight * t or order_weight * slices[r] < order_weight * t:
+                return 0
+
+            if len(slices) == 1 and slices[0] == t:
+                return 1
+
+            while l <= r:
+
+                m = int((l + r) / 2)
+                if slices[m] == t and order_weight * slices[m + order_weight] > order_weight * t:
+                    return len(slices) - m - 1 if desc else m
+                else:
+                    l = m + 1
+
+            return 0
+
+
+        left, right = 0, len(nums) - 1
+
+        while left < right or (left == right and nums[right] == target):
+            mid = int((left + right) / 2)
+            if nums[mid] > target:
+                right = mid
+            elif nums[mid] < target:
+                left = mid + 1
+            else:
+                index = [0, 0]
+                index[0] = mid - offset(nums[:mid], target, True)
+                index[1] = mid + offset(nums[mid+1:], target)
+                return index
+
+        return [-1, -1]
+
+
+    """
+    #3. Network Delay Time
+    https://leetcode.com/problems/network-delay-time/
+    
+    Input: times = [[2,1,1],[2,3,1],[3,4,1]], N = 4, K = 2
+    Output: 2
+    
+    N will be in the range [1, 100].
+    K will be in the range [1, N].
+    The length of times will be in the range [1, 6000].
+    All edges times[i] = (u, v, w) will have 1 <= u, v <= N and 0 <= w <= 100.
+    """
+
+    def networkDelayTime(self, times: List[List[int]], N: int, K: int) -> int:
+
+        from collections import defaultdict
+        from heapq import heappush, heappop
+
+
+        def append_sub_nodes(h, sub_nodes):
+            sub_nodes = list(filter(lambda x: not visited.__contains__(x[1][1]) or visited[x[1][1]] > visited[x[1][0]] + x[0], sub_nodes))
+
+            if sub_nodes:
+                for sn in sub_nodes:
+                    heappush(h, sn)
+
+
+        # list to graph
+        graph = defaultdict(list)
+
+        for source, target, time in times:
+            graph[source].append((time, (source, target)))
+
+        visited = {}
+        heapq = []
+        heappush(heapq, (0, (0, K)))
+
+        while heapq:
+
+            tup = heappop(heapq)
+            prev = tup[1][0]
+            node = tup[1][1]
+            weight = tup[0]
+
+            stored_path_times = visited[prev] if visited.get(prev) else 0
+            path_times = stored_path_times + weight
+
+            if node not in visited:
+                visited.setdefault(node, path_times)
+                append_sub_nodes(h=heapq, sub_nodes=graph[node])
+
+            else:
+                if path_times < visited[node]:
+                    visited[node] = path_times
+                    append_sub_nodes(h=heapq, sub_nodes=graph[node])
+
+        max_sum = max(visited.values())
+
+        if len(visited) != N:
+            return -1
+
+        if max_sum <= 0:
+            return -1
+
+        return max_sum
+
+
+    """
+    783. Minimum Distance Between BST Nodes
+    https://leetcode.com/problems/minimum-distance-between-bst-nodes/
+    
+    Given a Binary Search Tree (BST) with the root node root, return the minimum difference between the values of any two different nodes in the tree.
+    
+    Example :
+    
+    Input: root = [4,2,6,1,3,null,null]
+    Output: 1
+    Explanation:
+    Note that root is a TreeNode object, not an array.
+    
+    The given tree [4,2,6,1,3,null,null] is represented by the following diagram:
+    
+              4
+            /   \
+          2      6
+         / \    
+        1   3  
+    
+    while the minimum difference in this tree is 1, it occurs between node 1 and node 2, also between node 3 and node 2.
+    Note:
+    
+    The size of the BST will be between 2 and 100.
+    The BST is always valid, each node's value is an integer, and each node's value is different.
+    This question is the same as 530: https://leetcode.com/problems/minimum-absolute-difference-in-bst/
+
+    """
+    # Definition for a binary tree node.
+
+    def minDiffInBST(self, root: TreeNode) -> int:
+
+        def dfs(node: TreeNode, visited: {}):
+
+            if not node:
+                return
+
+            value = node.val
+            min_diff = 100
+
+            for v in visited:
+                min_diff = min(min_diff, abs(v - value))
+
+            visited[value] = min_diff
+
+            dfs(node.left, visited)
+            dfs(node.right, visited)
+
+
+        visited = {}
+        dfs(root, visited)
+
+        return min(visited.values())
+
+
+    """
+    78. Subsets
+    https://leetcode.com/problems/subsets/
+    
+    Given a set of distinct integers, nums, return all possible subsets (the power set).
+    
+    Note: The solution set must not contain duplicate subsets.
+    
+    Example:
+    
+    Input: nums = [1,2,3]
+    Output:
+    [
+      [3],
+      [1],
+      [2],
+      [1,2,3],
+      [1,3],
+      [2,3],
+      [1,2],
+      []
+    ]
+    """
+    def subsets(self, nums: List[int]) -> List[List[int]]:
+
+        import copy
+
+        def append_each_subset(targets, num):
+            for subset in targets:
+                subset.append(num)
+            return targets
+
+        if not nums:
+            return [[]]
+
+        pick = nums[0]
+        nums.remove(pick)
+
+        result_subsets = self.subsets(nums)
+        result_subsets += append_each_subset(copy.deepcopy(result_subsets), pick)
+
+        return result_subsets
 
 
 
 
 # print(Solution().relativeSortArray([2,3,1,3,2,4,6,19,9,2,7], [2,1,4,3,9,6]))
+
+
 # print(Solution().largestNumber([121,12]))
 # print(Solution().largestNumber([3,30,34,5,9]))
 # print(Solution().largestNumber([0, 0, 0]))
@@ -293,9 +537,51 @@ class Solution:
 # week4
 # print(Solution().minimumAbsoluteDifference([3, -7, 0]))
 
-print(Solution().luckBalance(2, [[5, 1], [4, 0], [6, 1], [2, 1], [8, 0]]))
+# print(Solution().luckBalance(2, [[5, 1], [4, 0], [6, 1], [2, 1], [8, 0]]))
 ## 3, [[5, 1], [2, 1], [1, 1], [8, 1], [10, 0], [5, 0]] -> 29
 ## 5, [[13, 1], [10, 1], [9, 1], [8, 1], [13, 1], [12, 1], [18, 1], [13, 1]] -> 42
 ## 2, [[5, 1], [4, 0], [6, 1], [2, 1], [8, 0]] -> 21
 
 # print(Solution().getMinimumCost(2, [2, 5, 6]))
+
+## week7
+
+# 2
+# print(Solution().searchRange(nums=[5,7,7,8,8,10], target=8))   # [3, 4]
+# print(Solution().searchRange(nums=[5,7,7,8,8,10], target=6))   # [-1, -1]
+# print(Solution().searchRange(nums=[], target=0))   # [-1, -1]
+# print(Solution().searchRange(nums=[1], target=1))   # [0, 0]
+# print(Solution().searchRange(nums=[-11,-4,-4,-4,0,2,6,10,14,32,44,77,105], target=-4))   # [1, 3]
+# print(Solution().searchRange(nums=[5,7,7,8,8,10], target=8))   # [3, 4]
+# print(Solution().searchRange(nums=[2,2], target=2))   # [0, 1]
+# print(Solution().searchRange(nums=[1,2,2,3,4,4,4], target=4))   # [4,6]
+# print(Solution().searchRange(nums=[1,4], target=4))   # [1,1]
+# print(Solution().searchRange(nums=[1,1,2], target=1))   # [0,1]
+
+
+# print(Solution().networkDelayTime(times = [[2,1,1],[2,3,1],[3,4,1]], N = 4, K = 2))   # 2
+# print(Solution().networkDelayTime(times = [[1,2,1]], N = 2, K = 2))                   # -1
+# print(Solution().networkDelayTime(times = [[1,2,1]], N = 2, K = 1))                   # 1
+# print(Solution().networkDelayTime(times = [[1,2,1],[2,1,3]], N = 2, K = 2))           # 3
+# print(Solution().networkDelayTime(times = [[1,2,1],[2,3,2],[1,3,2]], N = 3, K = 1))   # 2
+# print(Solution().networkDelayTime(times = [[1,2,1],[2,3,2],[1,3,1]], N = 3, K = 2))   # -1
+# print(Solution().networkDelayTime(times=[[1, 2, 1], [2, 3, 7], [1, 3, 4], [2, 1, 2]], N=3, K=2))  # 6
+# print(Solution().networkDelayTime(times=[[3,5,78],[2,1,1],[1,3,0],[4,3,59],[5,3,85],[5,2,22],[2,4,23],[1,4,43],[4,5,75],[5,1,15],[1,5,91],[4,1,16],[3,2,98],[3,4,22],[5,4,31],[1,2,0],[2,5,4],[4,2,51],[3,1,36],[2,3,59]], N=5, K=5))  # 31
+# print(Solution().networkDelayTime(times=[[4,2,76],[1,3,79],[3,1,81],[4,3,30],[2,1,47],[1,5,61],[1,4,99],[3,4,68],[3,5,46],[4,1,6],[5,4,7],[5,3,44],[4,5,19],[2,3,13],[3,2,18],[1,2,0],[5,1,25],[2,5,58],[2,4,77],[5,2,74]], N=5, K=3))  # 59
+# print(Solution().networkDelayTime(times=[[15,8,1],[7,10,41],[7,9,34],[9,4,31],[12,13,50],[14,3,52],[4,11,99],[4,7,86],[10,13,57],[9,6,10],[1,7,51],[7,15,38],[1,9,11],[12,7,94],[9,13,34],[11,7,79],[7,6,28],[5,3,34],[2,6,97],[14,1,97],[6,10,90],[12,10,37],[13,3,73],[11,14,7],[15,1,39],[6,5,90],[13,6,43],[6,9,32],[4,6,45],[11,10,2],[2,13,4],[14,15,29],[1,14,88],[14,6,19],[6,2,29],[3,14,72],[1,15,4],[11,5,2],[6,7,56],[8,7,88],[13,14,70],[14,12,58],[14,2,86],[11,3,57],[5,2,56],[3,10,26],[2,11,21],[14,5,54],[5,12,40],[14,4,81],[15,2,99],[5,7,57],[13,12,5],[4,9,60],[12,15,48],[6,14,1],[9,7,44],[13,7,69],[5,13,42],[4,1,7],[11,9,76],[8,1,76],[5,14,29],[2,3,69],[7,3,23],[12,14,28],[11,4,85],[10,1,10],[15,12,36],[1,11,69],[15,10,96],[11,13,69],[7,12,49],[1,2,95],[6,4,46],[8,12,94],[12,4,93],[13,5,31],[12,2,60],[6,1,87],[4,14,20],[5,11,89],[4,15,88],[4,10,21],[1,6,5],[10,8,26],[8,2,51],[3,15,23],[7,2,12],[11,1,47],[2,1,75],[3,8,63],[8,10,19],[6,8,18],[4,2,55],[14,11,80],[10,3,73],[3,5,22],[12,3,61],[1,13,33],[9,3,98],[9,12,69],[15,9,6],[7,13,76],[11,12,22],[11,15,51],[13,15,46],[5,10,58],[1,10,26],[13,4,85],[7,14,58],[5,8,46],[11,6,32],[10,9,41],[9,14,35],[14,13,60],[3,9,97],[2,5,39],[7,11,19],[1,12,27],[7,5,13],[8,4,34],[9,15,25],[5,1,93],[15,13,97],[14,9,35],[8,6,67],[9,5,39],[13,11,35],[7,4,21],[12,9,64],[14,8,8],[10,12,94],[8,9,76],[8,5,71],[2,9,64],[10,14,59],[1,4,74],[7,1,69],[15,5,55],[6,15,80],[13,8,84],[8,13,63],[8,3,91],[10,4,87],[1,5,39],[8,11,0],[1,3,79],[4,5,82],[4,12,87],[3,11,29],[7,8,92],[10,7,77],[6,12,42],[13,2,40],[9,10,13],[4,13,65],[2,4,34],[3,13,44],[2,14,69],[3,4,42],[5,15,98],[14,7,6],[15,3,94],[10,2,37],[15,11,7],[9,2,15],[13,9,66],[4,8,83],[8,15,23],[13,1,50],[6,13,57],[2,10,37],[10,6,38],[2,7,45],[9,8,8],[3,12,28],[3,2,83],[2,12,75],[1,8,91],[4,3,70],[12,6,48],[3,1,13],[5,6,42],[6,11,96],[3,6,22],[15,6,34],[11,8,43],[15,7,40],[9,11,57],[11,2,11],[2,8,22],[9,1,73],[2,15,40],[12,11,10],[15,4,78],[12,8,75],[10,15,37],[13,10,44],[8,14,33],[3,7,82],[5,4,46],[12,5,79],[15,14,43],[10,5,65],[5,9,34],[12,1,54],[6,3,16],[14,10,83],[10,11,67]], N=15, K=8))  # 34
+# print(Solution().networkDelayTime(times=[[2,4,10],[5,2,38],[3,4,33],[4,2,76],[3,2,64],[1,5,54],[1,4,98],[2,3,61],[2,1,0],[3,5,77],[5,1,34],[3,1,79],[5,3,2],[1,2,59],[4,3,46],[5,4,44],[2,5,89],[4,5,21],[1,3,86],[4,1,95]], N=5, K=1))  # 69
+
+
+## week8
+
+#1
+# treeNode = TreeNode(4, TreeNode(2, TreeNode(1), TreeNode(3)), TreeNode(6, None, None))
+# print(Solution().minDiffInBST(treeNode))   # 1
+# treeNode = TreeNode(1, TreeNode(0, None, None), TreeNode(48, TreeNode(12), TreeNode(49)))
+# print(Solution().minDiffInBST(treeNode))   # 1
+# treeNode = TreeNode(27, None, TreeNode(34, None, TreeNode(58, TreeNode(50, TreeNode(44, None, None), None), None)))
+# print(Solution().minDiffInBST(treeNode))   # 6
+
+#2
+print(Solution().subsets(nums = [1,2,3]))   #     [[3],[1],[2],[1,2,3],[1,3],[2,3],[1,2],[]]
+print(Solution().subsets(nums = []))   #     [[]]
