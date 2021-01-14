@@ -516,6 +516,126 @@ class Solution:
         return result_subsets
 
 
+        """
+        51. N-Queens
+        https://leetcode.com/problems/n-queens/
+        
+        The n-queens puzzle is the problem of placing n queens on an n×n chessboard such that no two queens attack each other.
+        
+        Given an integer n, return all distinct solutions to the n-queens puzzle.
+        
+        Each solution contains a distinct board configuration of the n-queens' placement, where 'Q' and '.' both indicate a queen and an empty space respectively.
+        
+        Example:
+        
+        Input: 4
+        Output: [
+         [".Q..",  // Solution 1
+          "...Q",
+          "Q...",
+          "..Q."],
+        
+         ["..Q.",  // Solution 2
+          "Q...",
+          "...Q",
+          ".Q.."]
+        ]
+        Explanation: There exist two distinct solutions to the 4-queens puzzle as shown above.
+        """
+    def solveNQueens(self, n: int) -> List[List[str]]:
+
+        placed = []
+
+        def check(x: int, placed: []):
+            for xx, yy in placed:
+                if xx == x or abs(xx - x) == 1:
+                    return False
+
+            return True
+
+        def dfs(limit: int, next_row_index: int, placed: []):
+
+            if next_row_index < limit:
+                dfs(limit, next_row_index + 1, [(x, next_row_index) for x in range(8) if check(x, placed)])
+
+        return dfs(n, 1, [(1, 0)])
+
+
+    '''
+    994. Rotting Oranges
+    https://leetcode.com/problems/rotting-oranges/
+    Input: [[2,1,1],[1,1,0],[0,1,1]]
+    Output: 4
+    Input: [[2,1,1],[0,1,1],[1,0,1]]
+    Output: -1
+    Explanation:  The orange in the bottom left corner (row 2, column 0) is never rotten, because rotting only happens 4-directionally.
+    Input: [[2,1,1],[0,1,1],[1,0,1]]
+    Output: -1
+    Explanation:  The orange in the bottom left corner (row 2, column 0) is never rotten, because rotting only happens 4-directionally.
+    
+    Note:
+    1 <= grid.length <= 10
+    1 <= grid[0].length <= 10
+    grid[i][j] is only 0, 1, or 2.
+    '''
+    def orangesRotting(self, grid: List[List[int]]) -> int:
+
+        def rotting(target_idx, arr):
+
+            if target_idx < 0 or target_idx >= len(arr) or arr[target_idx] == 0:
+                return False
+
+            if arr[target_idx] == 1:
+                arr[target_idx] = 2
+                return True
+
+        size = len(grid)
+
+        n1_grid = [element for array in grid for element in array]
+
+        on_going = True
+        minutes = 0
+        direction_indice = [1, -1, size, -1 * size] # 동,서,남,북
+
+        temp = []
+
+        # 1.상한 오렌지 index
+        for idx, val in enumerate(n1_grid):
+            if val == 2:
+                temp.append(idx)
+
+
+        while on_going:
+
+            changed = False
+            next_temp = []
+
+            # 2. 상한 오렌지 전염
+            for idx in temp:
+
+                for w in direction_indice:
+                    target_idx = idx - w
+                    if rotting(target_idx, n1_grid):
+                        changed = True
+                        next_temp.append(target_idx)
+
+            if changed:
+                minutes += 1
+            else:
+                on_going = False
+
+            temp = next_temp
+
+
+        return minutes
+
+
+
+
+
+
+
+
 
 
 # print(Solution().relativeSortArray([2,3,1,3,2,4,6,19,9,2,7], [2,1,4,3,9,6]))
@@ -583,5 +703,12 @@ class Solution:
 # print(Solution().minDiffInBST(treeNode))   # 6
 
 #2
-print(Solution().subsets(nums = [1,2,3]))   #     [[3],[1],[2],[1,2,3],[1,3],[2,3],[1,2],[]]
-print(Solution().subsets(nums = []))   #     [[]]
+# print(Solution().subsets(nums = [1,2,3]))   #     [[3],[1],[2],[1,2,3],[1,3],[2,3],[1,2],[]]
+# print(Solution().subsets(nums = []))   #     [[]]
+
+#2
+# print(Solution().solveNQueens(8))   #
+
+## week9
+# print(Solution().orangesRotting([[2,1,1],[1,1,0],[0,1,1]]))   #
+print(Solution().orangesRotting([[2,1,1],[0,1,1],[1,0,1]]))   #
